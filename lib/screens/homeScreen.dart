@@ -1,9 +1,6 @@
-import 'package:direct_prime_app/authentication.dart';
 import 'package:direct_prime_app/components/DDeliveriesList.dart';
 import 'package:direct_prime_app/components/DDrawerMenu.dart';
-import 'package:direct_prime_app/screens/loginScreen.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.title});

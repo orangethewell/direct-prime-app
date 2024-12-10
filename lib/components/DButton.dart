@@ -14,13 +14,12 @@ class DFullBordedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 5.0, vertical: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 8),
       child: OutlinedButton(
-        onPressed: onClick, 
-        child: Text(text),
+        onPressed: onClick,
         style: OutlinedButton.styleFrom(
           foregroundColor: Theme.of(context).primaryColor,
-          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -33,7 +32,8 @@ class DFullBordedButton extends StatelessWidget {
             fontWeight: FontWeight.bold,
             fontSize: 18,
           )
-        ),
+        ), 
+        child: Text(text),
       )
     );
   }
@@ -53,14 +53,13 @@ class DFullFilledButton extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 5.0, vertical: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 8),
       child: ElevatedButton(
-        onPressed: onClick, 
-        child: Text(text),
+        onPressed: onClick,
         style: ElevatedButton.styleFrom(
           backgroundColor: Theme.of(context).primaryColor,
           foregroundColor: Theme.of(context).primaryColorLight,
-          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -69,7 +68,8 @@ class DFullFilledButton extends StatelessWidget {
             fontWeight: FontWeight.bold,
             fontSize: 18,
           )
-        ),
+        ), 
+        child: Text(text),
       )
     );
   }

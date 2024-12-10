@@ -11,6 +11,9 @@ class DDrawerMenu extends StatelessWidget {
           Container(
             width: 1000,
             color: Theme.of(context).colorScheme.primary,
+            padding: EdgeInsets.only(
+              top: MediaQuery.of(context).padding.top,
+            ),
             child: Column(
               children: [
                 CircleAvatar(
@@ -23,9 +26,6 @@ class DDrawerMenu extends StatelessWidget {
                 SizedBox(height: 12),
               ],
             ),
-            padding: EdgeInsets.only(
-              top: MediaQuery.of(context).padding.top,
-            ),
           ),
           Container(
             padding: const EdgeInsets.all(24),
@@ -34,21 +34,21 @@ class DDrawerMenu extends StatelessWidget {
               children: [
                 ListTile(
                   leading: const Icon(Icons.home_outlined),
-                  title: Text('Início'),
+                  title: const Text('Início'),
                   onTap: () {
                     // Navigate to Home screen
                   },
                 ),
                 ListTile(
                   leading: const Icon(Icons.moped_outlined),
-                  title: Text('Meus Jobs'),
+                  title: const Text('Meus Jobs'),
                   onTap: () {
                     // Navigate to About screen
                   },
                 ),
                 ListTile(
                   leading: const Icon(Icons.settings_outlined),
-                  title: Text('Configurações'),
+                  title: const Text('Configurações'),
                   onTap: () {
                     // Navigate to Settings screen
                   },

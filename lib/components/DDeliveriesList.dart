@@ -6,6 +6,8 @@ import 'package:osrm/osrm.dart';
 import 'dart:math' as math;
 
 class DDeliveriesList extends StatefulWidget {
+  const DDeliveriesList({super.key});
+
   @override
   _DDeliveriesListState createState() => _DDeliveriesListState();
 }
@@ -87,6 +89,7 @@ class _DDeliveriesListState extends State<DDeliveriesList> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(
+                        height: 200,
                         child: FlutterMap(
                           options: const MapOptions(
                             initialCenter: const LatLng(-19.594934, -46.934390),
@@ -159,28 +162,27 @@ class _DDeliveriesListState extends State<DDeliveriesList> {
                               ],
                             ),
                         ]),
-                        height: 200,
                       ),
                       Center(
                         child: Text(
                           delivery,
-                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(height: 16),
-                            Text('Peso: 12kg'),
-                            SizedBox(height: 8),
-                            Text('Tamanho: 20x20cm'),
-                            SizedBox(height: 8),
-                            Text('Local de Captação: Senai Djalma Guimarães'),
-                            SizedBox(height: 8),
-                            Text('Local de Entrega: Supermercado ABC'),
-                            SizedBox(height: 16),
+                            const SizedBox(height: 16),
+                            const Text('Peso: 12kg'),
+                            const SizedBox(height: 8),
+                            const Text('Tamanho: 20x20cm'),
+                            const SizedBox(height: 8),
+                            const Text('Local de Captação: Senai Djalma Guimarães'),
+                            const SizedBox(height: 8),
+                            const Text('Local de Entrega: Supermercado ABC'),
+                            const SizedBox(height: 16),
                             Flex(
                               direction: Axis.horizontal,
                               children: [
