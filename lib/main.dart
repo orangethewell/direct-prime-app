@@ -1,5 +1,6 @@
 import 'package:direct_prime_app/screens/homeScreen.dart';
 import 'package:direct_prime_app/screens/loginScreen.dart';
+import 'package:direct_prime_app/screens/registerScreen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -35,7 +36,8 @@ class App extends StatelessWidget {
       ),
       routes: {
         '/lo': (context) => const HomeScreen(title: 'Direct Prime'),
-        '/': (context) => LoginScreen(title: "Demo"),
+        '/': (context) => LoginScreen(),
+        '/register': (context) => RegisterScreen()
       },
     );
   }
