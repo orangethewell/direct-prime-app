@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 class DFullBordedButton extends StatelessWidget {
   final Function()? onClick;
-  final String text;
+  final Widget child;
 
   const DFullBordedButton({
     super.key,
     required this.onClick,
-    required this.text,
+    required this.child,
   });
 
   @override
@@ -33,7 +33,7 @@ class DFullBordedButton extends StatelessWidget {
             fontSize: 18,
           )
         ), 
-        child: Text(text),
+        child: child,
       )
     );
   }
@@ -41,12 +41,12 @@ class DFullBordedButton extends StatelessWidget {
 
 class DFullFilledButton extends StatelessWidget {
   final Function()? onClick;
-  final String text;
+  final Widget child;
 
   const DFullFilledButton({
     super.key,
-    required this.onClick,
-    required this.text,
+    this.onClick,
+    required this.child,
   });
 
   @override
@@ -55,7 +55,7 @@ class DFullFilledButton extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 8),
       child: ElevatedButton(
-        onPressed: onClick,
+        onPressed: onClick??onClick,
         style: ElevatedButton.styleFrom(
           backgroundColor: Theme.of(context).primaryColor,
           foregroundColor: Theme.of(context).primaryColorLight,
@@ -69,7 +69,7 @@ class DFullFilledButton extends StatelessWidget {
             fontSize: 18,
           )
         ), 
-        child: Text(text),
+        child: child,
       )
     );
   }
