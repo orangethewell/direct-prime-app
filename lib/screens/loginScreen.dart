@@ -43,11 +43,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
-              Dtextfield(
+              DTextField(
                 controller: widget.emailController, 
                 hintText: "Email", 
               ),
-              Dtextfield(
+              DTextField(
                 controller: widget.passwordController, 
                 hintText: "Senha", 
                 obscureText: true

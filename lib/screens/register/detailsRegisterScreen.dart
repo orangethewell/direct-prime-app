@@ -55,6 +55,12 @@ class CourierDetailsRegisterPage extends StatefulWidget {
   final String roleKind;
   final VoidCallback nextPageCallback;
 
+  final TextEditingController usernameController;
+  final TextEditingController emailController;
+  final TextEditingController cpfController;
+  final TextEditingController passwordController;
+  final TextEditingController repeatPasswordController;
+
   final TextEditingController motorbikePlate;
   final TextEditingController anyBikeColor;
   final TextEditingController anyBikeBrand;
@@ -63,6 +69,13 @@ class CourierDetailsRegisterPage extends StatefulWidget {
     super.key,
     required this.roleKind,
     required this.nextPageCallback,
+
+    required this.usernameController,
+    required this.emailController,
+    required this.cpfController,
+    required this.passwordController,
+    required this.repeatPasswordController,
+
     required this.motorbikePlate,
     required this.anyBikeColor,
     required this.anyBikeBrand,
@@ -75,7 +88,38 @@ class CourierDetailsRegisterPage extends StatefulWidget {
 
 class _CourierDetailsRegisterPageState extends State<CourierDetailsRegisterPage> {
   String vehicleType = "Moto";
+  final _formMotorBikeKey = GlobalKey<FormState>();
+  final _formBikeKey = GlobalKey<FormState>();
   
+  String? validateBrazilianMotoPlate(String? plate) {
+    if (plate == null || plate.isEmpty) {
+      return "Placa não pode ser vazia!";
+    }
+
+    // Regex para validar placas no padrão Mercosul para motos
+    if (!RegExp(r'^[A-Z]{3}[0-9][A-Z][0-9]{2}').hasMatch(plate)) {
+      return "Placa inválida! O formato deve ser ABC1D23.";
+    }
+
+    return null;
+  }
+
+  String? validateFieldNonEmpty(String? text) {
+    if (text == null || text.isEmpty) {
+      return "Campo Obrigatório!";
+    }
+
+    return null;
+  }
+
+  void validateAndSubmit() {
+    if (vehicleType == "Moto" && _formMotorBikeKey.currentState!.validate()) {
+      widget.nextPageCallback();
+    } else if (vehicleType == "Bicicleta" && _formBikeKey.currentState!.validate()) {
+      widget.nextPageCallback();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -98,7 +142,7 @@ class _CourierDetailsRegisterPageState extends State<CourierDetailsRegisterPage>
             "de uma última informação: as características de seu "
             "veículo. As pessoas sabem quem é você, mas será que "
             "elas sabem como você trabalha por aí? Nos ajude a descobrir!",
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.justify,
             style: TextStyle(
               fontSize: 14,
             ),
@@ -135,10 +179,12 @@ class _CourierDetailsRegisterPageState extends State<CourierDetailsRegisterPage>
         ),
         () {
           if (vehicleType == "Moto") {
-            return Column(
+            return Form(
+              key: _formMotorBikeKey,
+              child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
+                const Padding(
                   padding: EdgeInsets.symmetric(vertical: 20),
                   child: Text(
                     "Características da Moto",
@@ -149,7 +195,7 @@ class _CourierDetailsRegisterPageState extends State<CourierDetailsRegisterPage>
                     ),
                   ),
                 ),
-                Padding(
+                const Padding(
                   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
                   child: Text(
                     "Número da Placa",
@@ -159,11 +205,12 @@ class _CourierDetailsRegisterPageState extends State<CourierDetailsRegisterPage>
                     ),
                   ),
                 ),
-                Dtextfield(
+                DTextFormField(
                   controller: widget.motorbikePlate,
-                  hintText: "Ex: BRA 0S11",
+                  hintText: "Ex: BRA 1D23",
+                  validator: validateBrazilianMotoPlate,
                 ),
-                Padding(
+                const Padding(
                   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
                   child: Text(
                     "Cor da Moto",
@@ -173,11 +220,12 @@ class _CourierDetailsRegisterPageState extends State<CourierDetailsRegisterPage>
                     ),
                   ),
                 ),
-                Dtextfield(
+                DTextFormField(
                   controller: widget.anyBikeColor,
                   hintText: "Ex: Vermelho",
+                  validator: validateFieldNonEmpty,
                 ),
-                Padding(
+                const Padding(
                   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
                   child: Text(
                     "Modelo/Marca",
@@ -187,62 +235,69 @@ class _CourierDetailsRegisterPageState extends State<CourierDetailsRegisterPage>
                     ),
                   ),
                 ),
-                Dtextfield(
+                DTextFormField(
                   controller: widget.anyBikeBrand,
                   hintText: "Ex: Yamaha",
+                  validator: validateFieldNonEmpty,
                 ),
               ],
-            );
+            )
+          );
           } else {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 20),
-                  child: Text(
-                    "Características da Bicicleta",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+            return Form(
+              key: _formBikeKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 20),
+                    child: Text(
+                      "Características da Bicicleta",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
-                  child: Text(
-                    "Cor da Bicicleta",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+                    child: Text(
+                      "Cor da Bicicleta",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-                Dtextfield(
-                  controller: widget.anyBikeColor,
-                  hintText: "Ex: Preta",
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
-                  child: Text(
-                    "Modelo/Marca",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                  DTextFormField(
+                    controller: widget.anyBikeColor,
+                    hintText: "Ex: Preta",
+                    validator: validateFieldNonEmpty,
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+                    child: Text(
+                      "Modelo/Marca",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-                Dtextfield(
-                  controller: widget.anyBikeBrand,
-                  hintText: "Ex: Mountain Bike",
-                ),
-              ],
+                  DTextFormField(
+                    controller: widget.anyBikeBrand,
+                    hintText: "Ex: Mountain Bike",
+                    validator: validateFieldNonEmpty,
+                  ),
+                ],
+              )
             );
           }
         }(),
         DFullFilledButton(
-          onClick: widget.nextPageCallback,
-          child: Text("Finalizar Cadastro"),
+          onClick: validateAndSubmit,
+          child: const Text("Finalizar Cadastro"),
         ),
       ],
     );

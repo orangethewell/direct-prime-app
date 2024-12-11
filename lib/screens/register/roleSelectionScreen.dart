@@ -48,7 +48,7 @@ class _RoleSelectionPageState extends State<RoleSelectionPage> {
                 children: [
                   Image(
                     image: AssetImage("assets/courier_icon.png"),
-                    width: 95,
+                    width: 75,
                     ),
                   Text("Quero ser entregador!")
                 ],
@@ -62,7 +62,7 @@ class _RoleSelectionPageState extends State<RoleSelectionPage> {
                   Text("Represento uma empresa!"),
                   Image(
                     image: AssetImage("assets/company_icon.png"),
-                    width: 85,
+                    width: 75,
                   ),
                 ],
               )

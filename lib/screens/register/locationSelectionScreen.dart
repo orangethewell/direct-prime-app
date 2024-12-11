@@ -11,8 +11,8 @@ class LocationSelectionPage extends StatefulWidget {
   const LocationSelectionPage({
     super.key,
     required this.nextPageCallback,
-    this.initialLatitude = 28.45306253513271,
-    this.initialLongitude = 81.47338277012638,
+    this.initialLatitude = 1.0,
+    this.initialLongitude = 1.0,
   });
 
   @override
@@ -20,14 +20,7 @@ class LocationSelectionPage extends StatefulWidget {
 }
 
 class _LocationSelectionPageState extends State<LocationSelectionPage> {
-  late LatLng _selectedLocation = LatLng(widget.initialLatitude, widget.initialLongitude);
-  
-  void getlocation() {
-    double latitude = _selectedLocation.latitude;
-    double longitude = _selectedLocation.longitude;
-    var coordinates = [latitude, longitude];
-    print(coordinates);
-  }
+  late LatLng? _selectedLocation;
 
   void setLocation(String roleName) {
     widget.nextPageCallback();
@@ -60,15 +53,15 @@ class _LocationSelectionPageState extends State<LocationSelectionPage> {
           child: Text(
             "Isso vai nos ajudar a encontrar "
             "parceiros para trabalhar com você!",
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.justify,
             style: TextStyle(
               fontSize: 14,
             ),
           ),
         ),
-        SizedBox(height: 50),
-        Text("Latitude: ${_selectedLocation.latitude}"),
-        Text("Longitude: ${_selectedLocation.longitude}"),
+        const SizedBox(height: 50),
+        Text("Latitude: ${(_selectedLocation??const LatLng(1.0, 1.0)).latitude}"),
+        Text("Longitude: ${(_selectedLocation??const LatLng(1.0, 1.0)).longitude}"),
         Flexible(
           flex: 10,
           child: FlutterMap(
@@ -78,7 +71,7 @@ class _LocationSelectionPageState extends State<LocationSelectionPage> {
                   _selectedLocation = LatLng(position.latitude, position.longitude);
                 });
               },
-              interactionOptions: InteractionOptions(
+              interactionOptions: const InteractionOptions(
                 flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag
               ),
               initialCenter: const LatLng(-19.594934, -46.934390),
@@ -92,10 +85,11 @@ class _LocationSelectionPageState extends State<LocationSelectionPage> {
               MarkerLayer(
                 markers: [
                   Marker(
-                    width: 80.0,
-                    height: 80.0,
-                    point: _selectedLocation,
+                    width: 120.0,
+                    height: 120.0,
+                    point: _selectedLocation??const LatLng(1.0, 1.0),
                     child: const Icon(
+                      size: 48,
                       Icons.location_on,
                       color: Color.fromARGB(255, 255, 7, 7),
                     )

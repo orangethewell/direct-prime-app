@@ -19,7 +19,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String role = "";
   final usernameController = TextEditingController();
   final emailController = TextEditingController();
+  final cpfController = TextEditingController();
   final passwordController = TextEditingController();
+  final repeatPasswordController = TextEditingController();
 
   final motorbikePlate = TextEditingController();
   final anyBikeColor = TextEditingController();
@@ -49,7 +51,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
     UserRegisterPage(
       username: usernameController,
       email: emailController,
+      cpf: cpfController,
       password: passwordController,
+      repeatPassword: repeatPasswordController,
       nextPageCallback: goNextPage,
     ),
     LocationSelectionPage(
