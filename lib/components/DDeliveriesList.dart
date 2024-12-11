@@ -92,6 +92,9 @@ class _DDeliveriesListState extends State<DDeliveriesList> {
                         height: 200,
                         child: FlutterMap(
                           options: const MapOptions(
+                            interactionOptions: InteractionOptions(
+                              flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag
+                            ),
                             initialCenter: const LatLng(-19.594934, -46.934390),
                             initialZoom: 13.0,
                           ), 
@@ -192,7 +195,7 @@ class _DDeliveriesListState extends State<DDeliveriesList> {
                                     onClick: () {
                                       Navigator.pop(context);
                                     }, 
-                                    text: "Aceitar"
+                                    child: Text("Aceitar")
                                   )
                                 ),
                                 Expanded(
@@ -201,7 +204,7 @@ class _DDeliveriesListState extends State<DDeliveriesList> {
                                     onClick: () {
                                       Navigator.pop(context);
                                     }, 
-                                    text: "Fechar"
+                                    child: Text("Fechar")
                                   )
                                 )
                               ]
