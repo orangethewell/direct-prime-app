@@ -312,6 +312,13 @@ class DetailsRegisterPage extends StatefulWidget {
   final TextEditingController motorbikePlate;
   final TextEditingController anyBikeColor;
   final TextEditingController anyBikeBrand;
+
+  // Common
+  final TextEditingController usernameController;
+  final TextEditingController emailController;
+  final TextEditingController cpfController;
+  final TextEditingController passwordController;
+  final TextEditingController repeatPasswordController;
   
   DetailsRegisterPage({
     super.key,
@@ -321,6 +328,12 @@ class DetailsRegisterPage extends StatefulWidget {
     required this.motorbikePlate,
     required this.anyBikeColor,
     required this.anyBikeBrand,
+
+    required this.usernameController,
+    required this.emailController,
+    required this.cpfController,
+    required this.passwordController,
+    required this.repeatPasswordController,
   });
 
   @override
@@ -339,6 +352,11 @@ class _DetailsRegisterPageState extends State<DetailsRegisterPage> {
           motorbikePlate: widget.motorbikePlate,
           anyBikeColor: widget.anyBikeColor,
           anyBikeBrand: widget.anyBikeBrand,
+          usernameController: widget.usernameController,
+          emailController: widget.emailController,
+          cpfController: widget.cpfController,
+          passwordController: widget.passwordController,
+          repeatPasswordController: widget.repeatPasswordController,
         );
       } else {
         return CompanyDetailsRegisterPage(

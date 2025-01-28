@@ -66,6 +66,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
       motorbikePlate: motorbikePlate,
       anyBikeColor: anyBikeColor,
       anyBikeBrand: anyBikeBrand,
+
+      usernameController: usernameController,
+      emailController: emailController,
+      cpfController: cpfController,
+      passwordController: passwordController,
+      repeatPasswordController: repeatPasswordController,
     )
   ];
 
