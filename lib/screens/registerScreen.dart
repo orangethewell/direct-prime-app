@@ -17,6 +17,9 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final pageController = PageController();
   String role = "";
+
+  final companyNameController = TextEditingController();
+
   final usernameController = TextEditingController();
   final emailController = TextEditingController();
   final cpfController = TextEditingController();
@@ -62,6 +65,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     DetailsRegisterPage(
       nextPageCallback: goNextPage,
       roleKind: () => role,
+
+      companyNameController: companyNameController,
       
       motorbikePlate: motorbikePlate,
       anyBikeColor: anyBikeColor,
