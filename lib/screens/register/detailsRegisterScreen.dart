@@ -5,11 +5,15 @@ import 'package:flutter/material.dart';
 class CompanyDetailsRegisterPage extends StatefulWidget {
   final String roleKind;
   final VoidCallback nextPageCallback;
+
+  final TextEditingController companyNameController;
   
   const CompanyDetailsRegisterPage({
     super.key,
     required this.roleKind,
     required this.nextPageCallback,
+    
+    required this.companyNameController,
   });
 
 
@@ -24,24 +28,56 @@ class _CompanyDetailsRegisterPageState extends State<CompanyDetailsRegisterPage>
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        Text("Informações sobre sua empresa"),
-        DropdownButton<String>(
-          value: vehicleType,
-          items: <String>[
-            "Moto",
-            "Bicicleta"
-          ].map((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(), 
-          onChanged: (value) { 
-            setState(() {
-              vehicleType = value!;
-            });
-           },
+        const Text(
+          "Informações sobre sua empresa",
+          textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+          ),
         ),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          child: Text(
+            "Estamos quase terminando seu cadastro! Só precisamos "
+            "de uma última informação: o perfil da sua empresa. "
+            "As pessoas sabem quem é você, mas será que "
+            "elas sabem quem você representa? Nos ajude a descobrir!",
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              fontSize: 14,
+            ),
+          ),
+        ),
+        // Profile picture select
+        Padding(padding: EdgeInsets.symmetric(vertical: 10),
+          child: Text(
+            "Foto de Perfil",
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        Column(
+          children: [
+            CircleAvatar(
+              radius: 124,
+              backgroundImage: NetworkImage("https://media.istockphoto.com/id/910563528/pt/foto/handsome-man.jpg?s=1024x1024&w=is&k=20&c=TESzB4KaNtKBmi8BwfqOUppgUlwr2pM28YCQZqGbUH0=")
+            ),
+          ],
+        ),
+        Padding(padding: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+          child: Text(
+              "Nome da Empresa",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+        ),
+        DTextFormField(controller: widget.companyNameController, hintText: "Ex: Judas Delivery"),
         DFullFilledButton(
           onClick: widget.nextPageCallback,
           child: Text("Continuar"),
@@ -142,7 +178,7 @@ class _CourierDetailsRegisterPageState extends State<CourierDetailsRegisterPage>
             "de uma última informação: as características de seu "
             "veículo. As pessoas sabem quem é você, mas será que "
             "elas sabem como você trabalha por aí? Nos ajude a descobrir!",
-            textAlign: TextAlign.justify,
+            textAlign: TextAlign.left,
             style: TextStyle(
               fontSize: 14,
             ),
@@ -313,6 +349,9 @@ class DetailsRegisterPage extends StatefulWidget {
   final TextEditingController anyBikeColor;
   final TextEditingController anyBikeBrand;
 
+  // Company
+  final TextEditingController companyNameController;
+
   // Common
   final TextEditingController usernameController;
   final TextEditingController emailController;
@@ -324,6 +363,8 @@ class DetailsRegisterPage extends StatefulWidget {
     super.key,
     required this.roleKind,
     required this.nextPageCallback,
+
+    required this.companyNameController,
 
     required this.motorbikePlate,
     required this.anyBikeColor,
@@ -361,6 +402,7 @@ class _DetailsRegisterPageState extends State<DetailsRegisterPage> {
       } else {
         return CompanyDetailsRegisterPage(
           roleKind: widget.roleKind(),
+          companyNameController: widget.companyNameController,
           nextPageCallback: widget.nextPageCallback,
         );
       } 
