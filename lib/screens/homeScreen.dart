@@ -2,10 +2,12 @@ import 'package:direct_prime_app/components/DButton.dart';
 import 'package:direct_prime_app/components/DDeliveriesList.dart';
 import 'package:direct_prime_app/components/DDrawerMenu.dart';
 import 'package:direct_prime_app/components/DMapDeliveryIcon.dart';
+import 'package:direct_prime_app/deliveryData.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:osrm/osrm.dart';
+import 'package:geolocator/geolocator.dart';
 import 'dart:math' as math;
 
 class HomeScreen extends StatefulWidget {
@@ -27,16 +29,45 @@ class HomeScreen extends StatefulWidget {
 }
 @override
 class _HomeScreenState extends State<HomeScreen> {
-  final _controller = DraggableScrollableController();
-  var from =
-      const LatLng(-19.590003, -46.931219);
-  var to =
-      const LatLng(-19.605740, -46.940700);
-  var points = <LatLng>[];
+  var deliveries = getNextToUserDeliveries();
+  late MapController mapController;
+  LatLong2 _currentPosition = LatLong2(0, 0);
+  var jobSelected = -1;
+  var points = [];
+
   @override
   void initState() {
     super.initState();
-    getRoute();
+    mapController = MapController();
+    _getCurrentLocation();
+    // _getPositionStream();
+  }
+
+  Future<void> _getCurrentLocation() async {
+    var permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied && await Geolocator.isLocationServiceEnabled()) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permission denied');
+      }
+    }
+    var position = await Geolocator.getCurrentPosition();
+    setState(() {
+      _currentPosition = LatLong2(position.latitude, position.longitude);
+    });
+    mapController.move(LatLng(position.latitude, position.longitude), 12.0);
+  }
+
+  void _getPositionStream() {
+    Geolocator.getPositionStream(
+      locationSettings: LocationSettings(
+        distanceFilter: 10
+      ),
+    ).listen((Position position) {
+      setState(() {
+        _currentPosition = LatLong2(position.latitude, position.longitude);
+      });
+    });
   }
 
    /// [distance] the distance between two coordinates [from] and [to]
@@ -46,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
   num duration = 0.0;
 
   /// [getRoute] get the route between two coordinates [from] and [to]
-  Future<void> getRoute() async {
+  Future<void> getRoute(LatLong2 from, LatLong2 to) async {
     final osrm = Osrm(
       source: OsrmSource(
         serverBuilder: OpenstreetmapServerBuilder().build,
@@ -81,123 +112,102 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       drawer: const DDrawerMenu(),
       body: Builder(
-        builder: (context) => FlutterMap(
-          options: const MapOptions(
-            interactionOptions: InteractionOptions(
-              flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag
-            ),
-            initialCenter: const LatLng(-19.594934, -46.934390),
-            initialZoom: 13.0,
-          ), 
+        builder: (context) => Stack(
           children: [
-            TileLayer(
-              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-              userAgentPackageName: 'com.directprime.app',
-            ),
-
-            PolylineLayer(
-              polylines: [
-                Polyline(
-                  points: points,
-                  strokeWidth: 4.0,
-                  color: Colors.red,
+            FlutterMap(
+              mapController: mapController,
+              options: const MapOptions(
+                interactionOptions: InteractionOptions(
+                  flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag
                 ),
-              ],
-            ),
-
-            /// [MarkerLayer] draw the marker on the map
-            MarkerLayer(
-              markers: [
-                Marker(
-                  width: 80.0,
-                  height: 80.0,
-                  point: from,
-                  child:const Icon(
-                    Icons.circle,
-                    color: Colors.blue,
-                  ),
-                ),
-                Marker(
-                  width: 80.0,
-                  height: 40.0,
-                  alignment: Alignment.topCenter,
-                  point: from, 
-                  child: IconButton(
-                    icon: DMapDeliveryIcon(icon: Icons.delivery_dining),
-                    onPressed: () {
-                      showBottomSheet(
-                        enableDrag: true,
-                        shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        ),
-                        context: context, 
-                        builder: (context) {
-                          final theme = Theme.of(context);
-                          // Using Wrap makes the bottom sheet height the height of the content.
-                          // Otherwise, the height will be half the height of the screen.
-                          return DecoratedBox(
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(12),
-                                topRight: Radius.circular(12),
-                              ),
-                            ),
-                            child: CustomScrollView(
-                              controller: ScrollController(),
-                              slivers: [
-                                const SliverToBoxAdapter(
-                                  child: Text('Title'),
-                                ),
-                                SliverList.list(
-                                  children: const [
-                                    Text('Content'),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          );
-                      });
-                    },
-                  ),
-                ),
-                Marker(
-                  width: 80.0,
-                  height: 80.0,
-                  point: to,
-                  child: DMapDeliveryIcon(icon: Icons.delivery_dining),
+                initialCenter: const LatLng(-19.594934, -46.934390),
+                initialZoom: 13.0,
+              ), 
+              children: [
+                TileLayer(
+                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  userAgentPackageName: 'com.directprime.app',
                 ),
 
-                /// in the middle of [points] list we draw the [Marker] shows the distance between [from] and [to]
-                if (points.isNotEmpty)
-                  Marker(
-                    rotate: true,
-                    width: 80.0,
-                    height: 30.0,
-                    point: points[math.max(0, (points.length / 2).floor())],
-                    child:  Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
+                /// [MarkerLayer] draw the marker on the map
+                MarkerLayer(
+                  markers: [
+                    if (_currentPosition.latitude != 0 && _currentPosition.longitude != 0)
+                      Marker(
+                        width: 80.0,
+                        height: 80.0,
+                        alignment: Alignment.bottomCenter,
+                        point: LatLng(_currentPosition.latitude, _currentPosition.longitude),
+                        child: const Icon(Icons.arrow_circle_down, size: 40, color: Colors.blue),
                       ),
-                      child: Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            '${distance.toStringAsFixed(2)} m',
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                    for (var delivery in deliveries) 
+                      Marker(
+                        width: 80.0,
+                        height: 40.0,
+                        alignment: Alignment.topCenter,
+                        point: LatLng(delivery.senderGeocode.latitude, delivery.senderGeocode.longitude),
+                        child: IconButton(
+                          icon: DMapDeliveryIcon(icon: Icons.delivery_dining),
+                          onPressed: () {
+                            setState(() {
+                              jobSelected = deliveries.indexOf(delivery);
+                            });
+                          },
                         ),
                       ),
-                    ),
+                  ],
+                ),
+            ]),
+             DraggableScrollableSheet(
+              initialChildSize: 0.2, // Tamanho inicial
+              minChildSize: 0.2, // Tamanho mínimo
+              maxChildSize: 0.6, // Tamanho máximo
+              snap: true,
+              builder: (context, scrollController) {
+                return Container(
+                  padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                    boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 10)],
                   ),
-              ],
+                  child: jobSelected == -1 ? ListView(
+                    controller: scrollController,
+                    children: [
+                      Center(child: Container(width: 40, height: 5, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(5)))),
+                      SizedBox(height: 20),
+                      Text(
+                        'Selecione um ponto para ter mais informações', 
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ) : ListView (
+                    controller: scrollController,
+                    children: [
+                      Text('Detalhes da entrega', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      SizedBox(height: 10),
+                      Text('Empresa de envio: ${deliveries[jobSelected].sendingCompanyName}'),
+                      Text('Empresa de recebimento: ${deliveries[jobSelected].receivingCompanyName}'),
+                      Text('Produto: ${deliveries[jobSelected].productName}'),
+                      Text('Status: ${deliveries[jobSelected].status}'),
+                      SizedBox(height: 20),
+                      DFullFilledButton(
+                        child: Text('Ver rota'),
+                        onClick: () async {
+                          await getRoute(deliveries[jobSelected].senderGeocode, deliveries[jobSelected].receiverGeocode);
+                          isPairly = true;
+                        },
+                      ),
+                      SizedBox(height: 20),
+                    ],
+                  )
+                );
+              },
             ),
-        ]),
-      )
+          ]
+        )
+      ),
     );
   }
 
