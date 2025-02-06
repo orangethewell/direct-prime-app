@@ -72,14 +72,14 @@ List<Delivery> getNextToUserDeliveries() {
       senderGeocode: LatLong2(-19.599745, -46.948295),
       receiverGeocode: LatLong2(-19.600148, -46.934587),
       productName: "Livro de Receitas União Doces Segredos e Carinhos",
-      productImage: "https://images-americanas.b2w.io/produtos/3535421573/imagens/livro-de-receitas-uniao-doces-segredos-e-carinhos/3535421573_1_large.jpg",
+      productImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBNQDqeTwkXofrC4XGRpzVYdikhlLnE054Fw&s",
       productDetails: ProductDetails(
         weight: 0,
         height: 29.7,
         width: 21,
         length: 8,
       ),
-      status: DeliveryStatus.assigned,
+      status: DeliveryStatus.pending,
     ),
   ];
 }
