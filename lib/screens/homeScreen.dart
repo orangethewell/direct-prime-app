@@ -32,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   LatLong2 _currentPosition = LatLong2(0, 0);
   var jobSelected = -1;
   List<LatLng> points = [];
+  DraggableScrollableController _draggableScrollableController = DraggableScrollableController();
 
   @override
   void initState() {
@@ -148,11 +149,21 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: const Icon(Icons.arrow_circle_down, size: 40, color: Colors.blue),
                       ),
 
+                    for (var delivery in deliveries)
+                      Marker(
+                        width: 20.0,
+                        height: 20.0,
+                        point: LatLng(delivery.senderGeocode.latitude, delivery.senderGeocode.longitude),
+                        child: Icon(Icons.circle, size: 20, color: Colors.blue[300]),
+                      ),
+                    
+
                     if (jobSelected != -1) 
                       Marker(
                         point: LatLng(deliveries[jobSelected].receiverGeocode.latitude, deliveries[jobSelected].receiverGeocode.longitude), 
                         child: DMapDeliveryIcon(icon: Icons.send_and_archive_outlined,)
                       ),
+
                     for (var delivery in deliveries) 
                       if (jobSelected == -1 || deliveries.indexOf(delivery) == jobSelected)
                       Marker(
@@ -167,18 +178,19 @@ class _HomeScreenState extends State<HomeScreen> {
                             setState(() {
                               jobSelected = deliveries.indexOf(delivery);
                             });
+                            _draggableScrollableController.animateTo(
+                              0.6,
+                              duration: Duration(milliseconds: 300),
+                              curve: Curves.easeInOut,
+                            );
                           },
                         ),
-                      ) else Marker(
-                        width: 20.0,
-                        height: 20.0,
-                        point: LatLng(delivery.senderGeocode.latitude, delivery.senderGeocode.longitude),
-                        child: Icon(Icons.circle, size: 20, color: Colors.blue[300]),
-                      ),
+                      ), 
                   ],
                 ),
             ]),
              DraggableScrollableSheet(
+              controller: _draggableScrollableController,
               initialChildSize: 0.2, // Tamanho inicial
               minChildSize: 0.2, // Tamanho mínimo
               maxChildSize: 0.6, // Tamanho máximo
@@ -205,15 +217,135 @@ class _HomeScreenState extends State<HomeScreen> {
                   ) : ListView (
                     controller: scrollController,
                     children: [
-                      Text('Detalhes da entrega', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      Center(child: Container(width: 40, height: 5, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(5)))),
+                      SizedBox(height: 20),
+                      Row(
+                        children: [
+                          BackButton(
+                            onPressed: () {
+                              setState(() {
+                                jobSelected = -1;
+                                points = [];
+                              });
+                              _draggableScrollableController.animateTo(
+                                0.2,
+                                duration: Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                              );
+                            },
+                          ),
+                          const Text('Detalhes da entrega', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
                       SizedBox(height: 10),
-                      Text('Empresa de envio: ${deliveries[jobSelected].sendingCompanyName}'),
-                      Text('Empresa de recebimento: ${deliveries[jobSelected].receivingCompanyName}'),
-                      Text('Produto: ${deliveries[jobSelected].productName}'),
-                      Text('Status: ${deliveries[jobSelected].status}'),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,  
+                          children: [
+                            Image(image: NetworkImage(deliveries[jobSelected].productImage), width: 100, height: 100, fit: BoxFit.cover),
+                            SizedBox(width: 10),
+                            Flexible(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  RichText(
+                                    text: TextSpan(
+                                    text: 'Remetente: ',
+                                    style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.bold),
+                                    children: <TextSpan>[
+                                      TextSpan(
+                                      text: deliveries[jobSelected].sendingCompanyName,
+                                      style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.normal),
+                                      ),
+                                    ],
+                                    ),
+                                  ),
+                                  RichText(
+                                    text: TextSpan(
+                                    text: 'Destino: ',
+                                    style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.bold),
+                                    children: <TextSpan>[
+                                      TextSpan(
+                                      text: deliveries[jobSelected].receivingCompanyName,
+                                      style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.normal),
+                                      ),
+                                    ],
+                                    ),
+                                  ),
+                                  RichText(
+                                    text: TextSpan(
+                                    text: 'Produto: ',
+                                    style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.bold),
+                                    children: <TextSpan>[
+                                      TextSpan(
+                                      text: deliveries[jobSelected].productName,
+                                      style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.normal),
+                                      ),
+                                    ],
+                                    ),
+                                  ),
+                                  // Add a line between other product info and main info
+                                  Padding(padding: EdgeInsets.only(top: 10, bottom: 10), child: Divider()),
+                                  Text("Outras informações", style: TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+                                  SizedBox(height: 10),
+                                  if (deliveries[jobSelected].productDetails.height != 0 && deliveries[jobSelected].productDetails.width != 0 && deliveries[jobSelected].productDetails.length != 0)
+                                  RichText(
+                                    text: TextSpan(
+                                    text: 'Dimensões: ',
+                                    style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.bold),
+                                    children: <TextSpan>[
+                                      TextSpan(
+                                      text: "${deliveries[jobSelected].productDetails.height} x ${deliveries[jobSelected].productDetails.width} x ${deliveries[jobSelected].productDetails.length} cm",
+                                      style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.normal),
+                                      ),
+                                    ],
+                                    ),
+                                  ),
+                                  if (deliveries[jobSelected].productDetails.weight != 0)
+                                  RichText(
+                                    text: TextSpan(
+                                    text: 'Peso: ',
+                                    style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.bold),
+                                    children: <TextSpan>[
+                                      TextSpan(
+                                      text: "${deliveries[jobSelected].productDetails.weight} kg",
+                                      style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.normal),
+                                      ),
+                                    ],
+                                    ),
+                                  ),
+                                  Padding(padding: EdgeInsets.only(top: 10, bottom: 10), child: Divider()),
+                                  RichText(
+                                    text: TextSpan(
+                                    text: 'Situação: ',
+                                    style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.bold),
+                                    children: <TextSpan>[
+                                      TextSpan(
+                                      text: () {
+                                        switch (deliveries[jobSelected].status) {
+                                        case DeliveryStatus.pending:
+                                          return 'Pendente';
+                                        case DeliveryStatus.onCourse:
+                                          return 'Em trânsito';
+                                        case DeliveryStatus.completed:
+                                          return 'Entregue';
+                                        default:
+                                          return 'Desconhecido';
+                                        }
+                                      }(),
+                                      style: DefaultTextStyle.of(context).style.copyWith(fontWeight: FontWeight.normal),
+                                      ),
+                                    ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       SizedBox(height: 20),
                       DFullFilledButton(
-                        child: Text('voltar'),
+                        child: Text('Aceitar demanda'),
                         onClick: () async {
                           setState(() {
                             jobSelected = -1;
