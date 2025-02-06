@@ -1,5 +1,4 @@
 import 'package:direct_prime_app/components/DButton.dart';
-import 'package:direct_prime_app/components/DDeliveriesList.dart';
 import 'package:direct_prime_app/components/DDrawerMenu.dart';
 import 'package:direct_prime_app/components/DMapDeliveryIcon.dart';
 import 'package:direct_prime_app/deliveryData.dart';
@@ -8,7 +7,6 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:osrm/osrm.dart';
 import 'package:geolocator/geolocator.dart';
-import 'dart:math' as math;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.title});
@@ -33,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late MapController mapController;
   LatLong2 _currentPosition = LatLong2(0, 0);
   var jobSelected = -1;
-  var points = [];
+  List<LatLng> points = [];
 
   @override
   void initState() {
@@ -129,6 +127,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   userAgentPackageName: 'com.directprime.app',
                 ),
 
+                PolylineLayer(polylines: [
+                  if (points.isNotEmpty)
+                    Polyline(
+                      points: points,
+                      strokeWidth: 4.0,
+                      color: Colors.blue,
+                    ),
+                ]),
+
                 /// [MarkerLayer] draw the marker on the map
                 MarkerLayer(
                   markers: [
@@ -140,7 +147,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         point: LatLng(_currentPosition.latitude, _currentPosition.longitude),
                         child: const Icon(Icons.arrow_circle_down, size: 40, color: Colors.blue),
                       ),
+
+                    if (jobSelected != -1) 
+                      Marker(
+                        point: LatLng(deliveries[jobSelected].receiverGeocode.latitude, deliveries[jobSelected].receiverGeocode.longitude), 
+                        child: DMapDeliveryIcon(icon: Icons.send_and_archive_outlined,)
+                      ),
                     for (var delivery in deliveries) 
+                      if (jobSelected == -1 || deliveries.indexOf(delivery) == jobSelected)
                       Marker(
                         width: 80.0,
                         height: 40.0,
@@ -148,12 +162,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         point: LatLng(delivery.senderGeocode.latitude, delivery.senderGeocode.longitude),
                         child: IconButton(
                           icon: DMapDeliveryIcon(icon: Icons.delivery_dining),
-                          onPressed: () {
+                          onPressed: () async{
+                            await getRoute(delivery.senderGeocode, delivery.receiverGeocode);
                             setState(() {
                               jobSelected = deliveries.indexOf(delivery);
                             });
                           },
                         ),
+                      ) else Marker(
+                        width: 20.0,
+                        height: 20.0,
+                        point: LatLng(delivery.senderGeocode.latitude, delivery.senderGeocode.longitude),
+                        child: Icon(Icons.circle, size: 20, color: Colors.blue[300]),
                       ),
                   ],
                 ),
@@ -193,10 +213,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       Text('Status: ${deliveries[jobSelected].status}'),
                       SizedBox(height: 20),
                       DFullFilledButton(
-                        child: Text('Ver rota'),
+                        child: Text('voltar'),
                         onClick: () async {
-                          await getRoute(deliveries[jobSelected].senderGeocode, deliveries[jobSelected].receiverGeocode);
-                          isPairly = true;
+                          setState(() {
+                            jobSelected = -1;
+                            points = [];
+                          });
                         },
                       ),
                       SizedBox(height: 20),

@@ -49,6 +49,14 @@ class _DMapDeliveryIconState extends State<DMapDeliveryIcon>
       alignment: AlignmentDirectional.center,
       clipBehavior: Clip.none,
       children: [
+        const Positioned(
+          top: 24,
+          child: Icon(
+            Icons.circle,
+            size: 18.0,
+            color: Colors.blue,
+          )
+        ),
         Positioned(
           top: -25,
           child: Stack(
@@ -67,9 +75,9 @@ class _DMapDeliveryIconState extends State<DMapDeliveryIcon>
                     child: Center(
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: const Icon(
-                          Icons.delivery_dining,
-                          color: Colors.blue,
+                        child: Icon(
+                          widget.icon,
+                          color: widget.color,
                           size: 32.0,
                         )
                       ),
@@ -89,9 +97,9 @@ class _DMapDeliveryIconState extends State<DMapDeliveryIcon>
                     child: Center(
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: const Icon(
-                          Icons.delivery_dining,
-                          color: Colors.blue,
+                        child: Icon(
+                          widget.icon,
+                          color: widget.color,
                           size: 32.0,
                         )
                       ),
@@ -107,9 +115,9 @@ class _DMapDeliveryIconState extends State<DMapDeliveryIcon>
                 child: Center(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: const Icon(
-                      Icons.delivery_dining,
-                      color: Colors.blue,
+                    child: Icon(
+                      widget.icon,
+                      color: widget.color,
                       size: 32.0,
                     )
                   ),
@@ -118,14 +126,14 @@ class _DMapDeliveryIconState extends State<DMapDeliveryIcon>
             ]
           )
         ),
-        Positioned(
+        const Positioned(
           top: 2,
           child: const Icon(
             Icons.arrow_drop_down,
             size: 48.0,
             color: Colors.white,
           )
-        )
+        ),
       ]
     );
   }
